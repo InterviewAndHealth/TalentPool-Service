@@ -1,5 +1,12 @@
 const { Pool } = require("pg");
-const { PGUSER, PGPASSWORD, PGHOST, PGPORT, PGDATABASE } = require("../config");
+const {
+  PGUSER,
+  PGPASSWORD,
+  PGHOST,
+  PGPORT,
+  PGDATABASE,
+  NODE_ENV,
+} = require("../config");
 const path = require("path");
 const fs = require("fs");
 
@@ -15,9 +22,7 @@ class DB {
         host: PGHOST,
         port: PGPORT,
         database: PGDATABASE,
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        ssl: NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
       });
 
       this.#pool.on("error", (err) => {

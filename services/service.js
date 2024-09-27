@@ -6,7 +6,12 @@ const {
   InternalServerError,
 } = require("../utils/errors");
 const { EventService, RPCService } = require("./broker");
-const { EVENT_TYPES, TEST_QUEUE, TEST_RPC } = require("../config");
+const {
+  SERVICE_QUEUE,
+  EVENT_TYPES,
+  TEST_QUEUE,
+  TEST_RPC,
+} = require("../config");
 
 // Service will contain all the business logic
 class Service {
@@ -83,6 +88,18 @@ class Service {
 
     return data;
   }
+
+  static async handleEvent(data) {
+    console.log(data);
+  }
+
+  static async respondRPC(data) {
+    console.log(data);
+    return { data: "This is a response of rpc" };
+  }
 }
+
+EventService.subscribe(SERVICE_QUEUE, Service);
+RPCService.respond(Service);
 
 module.exports = Service;

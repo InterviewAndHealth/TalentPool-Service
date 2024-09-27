@@ -30,7 +30,6 @@ router.post("/register", async (req, res) => {
 });
 
 router.get("/rpc", async (req, res) => {
-  console.log(req.headers.authorization);
   const data = await service.rpc_test();
 
   return res.json(data);

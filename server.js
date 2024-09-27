@@ -2,7 +2,7 @@ const express = require("express");
 require("express-async-errors");
 const cors = require("cors");
 const error = require("./middlewares/error");
-const routes = require("./api/routes");
+const routes = require("./routes/routes");
 const { DB } = require("./database");
 
 module.exports = async (app) => {

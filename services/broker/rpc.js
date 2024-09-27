@@ -7,6 +7,7 @@ class RPCService {
    * Request a data from a service
    * @param {string} service_rpc - The service rpc to request data from
    * @param {object} request_payload - The request payload
+   * @param {number} timeout - The request timeout in seconds (default is 10 seconds)
    * @returns {Promise} - A promise that resolves when the request is successful
    * @throws {Error} - If request fails
    * @example
@@ -17,7 +18,7 @@ class RPCService {
    *    },
    * });
    */
-  static async request(service_rpc, request_payload) {
+  static async request(service_rpc, request_payload, timeout = 10) {
     try {
       const id = nanoid();
       const channel = await Broker.connect();
@@ -33,17 +34,16 @@ class RPCService {
       );
 
       return new Promise((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          channel.close();
+        const rpcTimeout = setTimeout(() => {
           reject("Unable to get data");
-        }, 10000);
+        }, timeout * 1000);
 
         channel.consume(
           queue.queue,
           (data) => {
             if (data.properties.correlationId === id) {
               resolve(JSON.parse(data.content.toString()));
-              clearTimeout(timeout);
+              clearTimeout(rpcTimeout);
             } else {
               reject("Data not found");
             }

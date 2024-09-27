@@ -10,6 +10,7 @@ if (process.env.NODE_ENV !== "production") {
 
 module.exports = {
   PORT: process.env.PORT || 8000,
+  NODE_ENV: process.env.NODE_ENV,
   APP_SECRET: process.env.APP_SECRET,
   PGUSER: process.env.PGUSER,
   PGPASSWORD: process.env.PGPASSWORD,

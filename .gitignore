@@ -20,3 +20,4 @@ yarn.lock
 .DS_Store
 
 tmp/
+docker/
