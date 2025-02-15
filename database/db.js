@@ -1,11 +1,7 @@
 const { Pool } = require("pg");
 const {
-  PGUSER,
-  PGPASSWORD,
-  PGHOST,
-  PGPORT,
-  PGDATABASE,
-  NODE_ENV,
+  DATABASE_URL,
+  DATABASE_NAME
 } = require("../config");
 const path = require("path");
 const fs = require("fs");
@@ -15,14 +11,22 @@ class DB {
   static #isConnected = false;
 
   static async connect() {
+    // if (!this.#pool) {
+    //   this.#pool = new Pool({
+    //     user: PGUSER,
+    //     password: PGPASSWORD,
+    //     host: PGHOST,
+    //     port: PGPORT,
+    //     database: PGDATABASE,
+    //     ssl: NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+    //   });
+
     if (!this.#pool) {
       this.#pool = new Pool({
-        user: PGUSER,
-        password: PGPASSWORD,
-        host: PGHOST,
-        port: PGPORT,
-        database: PGDATABASE,
-        ssl: NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+        connectionString: `${DATABASE_URL}/${DATABASE_NAME}`,
+        // ssl: NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+        ssl: false,
+        // ssl: { rejectUnauthorized: false },
       });
 
       this.#pool.on("error", (err) => {
