@@ -1,12 +1,7 @@
 const dotEnv = require("dotenv");
 const { EVENT_TYPES, RPC_TYPES } = require("./types");
 
-if (process.env.NODE_ENV !== "production") {
-  const configFile = `./.env.${process.env.NODE_ENV}`;
-  dotEnv.config({ path: configFile });
-} else {
-  dotEnv.config();
-}
+dotEnv.config();
 
 module.exports = {
   PORT: process.env.PORT || 8000,
