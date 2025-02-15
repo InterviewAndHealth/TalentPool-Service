@@ -14,6 +14,7 @@ const {
 } = require("../config");
 
 const pdfParse = require("pdf-parse");
+const { getSignedUrlForRead } = require("../config/awsconfig");
 
 // Service will contain all the business logic
 class Service {
