@@ -17,6 +17,8 @@ const fs = require("fs");
 
 const {s3,upload}=require("../config/awsconfig");
 
+const { customAlphabet } = require("nanoid");
+
 const nanoid = customAlphabet("0123456789abcdefghijklmnopqrstuvwxyz", 12);
 
 
