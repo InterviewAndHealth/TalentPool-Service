@@ -13,6 +13,8 @@ const {
   TEST_RPC,
 } = require("../config");
 
+const pdfParse = require("pdf-parse");
+
 // Service will contain all the business logic
 class Service {
   constructor() {
@@ -20,62 +22,63 @@ class Service {
   }
 
   // Login method will be used to authenticate the user
-  async login(email, password) {
-    const user = await this.repository.getUser(email);
+ async extractResumeData (buffer) {
+    try {
+        const data = await pdfParse(buffer);
+        const text = data.text;
+  
+        return {
+            name: text.match(/Name:\s*(.*)/)?.[1] || "Unknown",
+            email: text.match(/[\w.-]+@[\w.-]+\.\w+/)?.[0] || "Not Found",
+            contact_number: text.match(/\b\d{10}\b/)?.[0] || "Not Found",
+            city: text.match(/City:\s*(.*)/)?.[1] || "Unknown",
+            country: text.match(/Country:\s*(.*)/)?.[1] || "Unknown",
+            years_of_experience: parseInt(text.match(/(\d+)\s*years of experience/)?.[1]) || 0,
+            expertise: text.match(/Expertise:\s*(.*)/)?.[1] || "Unknown",
+            current_company: text.match(/Company:\s*(.*)/)?.[1] || "Unknown",
+            location_preference: text.match(/Preferred Location:\s*(.*)/)?.[1] || "Unknown",
+        };
+    } catch (error) {
+        console.error("Error parsing resume:", error);
+        return {};
+    }
+  };
 
-    if (!user) throw new NotFoundError("User not found");
 
-    if (!(await bcrypt.compare(password, user.password)))
-      throw new BadRequestError("Invalid password");
+  async addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference) {
 
-    EventService.publish(TEST_QUEUE, {
-      type: EVENT_TYPES.USER_LOGGED_IN,
-      data: {
-        userId: user.public_id,
-        email: user.email,
-      },
-    });
+    const data = await this.repository.addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference);
 
-    return {
-      message: "Login successful",
-      user: {
-        id: user.public_id,
-        email: user.email,
-        name: user.name,
-        created_at: user.created_at,
-      },
-    };
+    return{
+      message:"Resume added successfully",
+      data
+    }
+    
+  };
+
+
+  async getAllResumes(recruiter_id){
+
+    const data = await this.repository.getAllResumes(recruiter_id);
+
+    return{
+      message:"Resumes fetched successfully",
+      data
+    }
+
   }
 
-  // Register method will be used to create a new user
-  async register(email, password, name) {
-    const user = await this.repository.getUser(email);
-    if (user) throw new BadRequestError("User already exists");
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await this.repository.createUser(
-      email,
-      hashedPassword,
-      name
-    );
+  async getResumeById(resume_id,recruiter_id){
 
-    EventService.publish(TEST_QUEUE, {
-      type: EVENT_TYPES.USER_CREATED,
-      data: {
-        userId: newUser.public_id,
-        email: newUser.email,
-      },
-    });
+    const data = await this.repository.getResumeById(resume_id,recruiter_id);
 
-    return {
-      message: "User created successfully",
-      user: {
-        id: newUser.public_id,
-        email: newUser.email,
-        name: newUser.name,
-        created_at: newUser.created_at,
-      },
-    };
+    if (!data) throw new NotFoundError("Resume not found");
+
+    const filename = `${resume_id}.pdf`
+    const signedUrl = await getSignedUrlForRead(filename)
+    // console.log(signedUrl);
+    return { data: signedUrl }
   }
 
   async rpc_test() {

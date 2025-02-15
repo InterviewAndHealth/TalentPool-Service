@@ -22,6 +22,39 @@ class Repository {
       text: "INSERT INTO users (public_id, email, password, name) VALUES ($1, $2, $3, $4) RETURNING *",
       values: [id, email, password, name],
     });
+    
+    return result.rows[0];
+  }
+
+
+  async addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference){
+
+    const result = await DB.query({
+      text: "INSERT INTO talentpoolresumes( resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
+      values: [resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference],
+    });
+
+    return result.rows[0];
+    
+  }
+
+
+  async getAllResumes(recruiter_id){
+
+    const result = await DB.query({
+      text: "SELECT * FROM talentpoolresumes WHERE recruiter_id = $1",
+      values: [recruiter_id],
+    });
+
+    return result.rows;
+  }
+
+  async getResumeById(resume_id,recruiter_id){
+
+    const result = await DB.query({
+      text: "SELECT * FROM talentpoolresumes WHERE resume_id = $1 AND recruiter_id = $2",
+      values: [resume_id,recruiter_id],
+    });
 
     return result.rows[0];
   }
