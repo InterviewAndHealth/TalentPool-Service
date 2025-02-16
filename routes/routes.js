@@ -63,14 +63,49 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
         // const current_company=resumeData.current_company;
         // const location_preference=resumeData.location_preference;
 
+        let parsedResume = null;
+        try{
+           parsedResume = await resumator.parse(file.buffer);
+        }
+        catch(error){
+          console.log(error);
+        }
+        
 
+        console.log("parsedResume is :"+parsedResume);
 
-        const parsedResume = await resumator.parseResume(file.buffer);
         if (!parsedResume) {
             responses.push({ error: "Resume data not found" });
             continue;
         }
 
+
+        try{
+
+          const candidate_name = parsedResume.name || "Unknown";
+        const candidate_email = parsedResume.email || "Not Found";
+        const contact_number = parsedResume.phone || "Not Found";
+        
+        const location = parsedResume.location?.split(",");
+        const city = location?.[0]?.trim() || "Unknown";
+        const country = location?.[1]?.trim() || "Unknown";
+
+        const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
+            const match = exp.duration.match(/(\d+)\s*years?/);
+            return total + (match ? parseInt(match[1]) : 0);
+        }, 0) || 0;
+
+        const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
+        
+        const current_company = parsedResume.experience?.[0]?.company || "Unknown";
+        const location_preference = parsedResume.location || "Unknown";
+
+
+
+
+        }catch(error){
+          console.log(error);
+        }
         const candidate_name = parsedResume.name || "Unknown";
         const candidate_email = parsedResume.email || "Not Found";
         const contact_number = parsedResume.phone || "Not Found";
@@ -89,6 +124,8 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
         const current_company = parsedResume.experience?.[0]?.company || "Unknown";
         const location_preference = parsedResume.location || "Unknown";
 
+
+        console.log("step1");
           // Upload to S3
           const uploadParams = {
               Bucket: AWS_S3_BUCKET_NAME,
@@ -100,7 +137,11 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
           const s3Result = await s3.upload(uploadParams).promise();
           const fileUrl = s3Result.Location;
 
+          console.log("step2");
+
           const data=await service.addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference);
+
+          console.log("step3");
 
 
 
