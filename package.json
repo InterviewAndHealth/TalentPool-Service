@@ -26,7 +26,8 @@
     "nanoid": "^3.3.7",
     "pdf-parse": "^1.1.1",
     "pdf-parser": "^1.0.5",
-    "pg": "^8.12.0"
+    "pg": "^8.12.0",
+    "resumator": "^0.1.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

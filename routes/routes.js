@@ -10,6 +10,7 @@ const authMiddleware = require("../middlewares/auth");
 const router = express.Router();
 const service = new Service();
 
+const resumator = require("resumator");
 
 
 const AWS = require("aws-sdk");
@@ -46,21 +47,47 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
       for (const file of req.files) {
           const resume_id = nanoid();
 
-        const resumeData = await service.extractResumeData(file.buffer);
-        if(Object.keys(resumeData).length === 0 && resumeData.constructor === Object){
-            responses.push({error:"Resume data not found"});
+        // const resumeData = await service.extractResumeData(file.buffer);
+        // if(Object.keys(resumeData).length === 0 && resumeData.constructor === Object){
+        //     responses.push({error:"Resume data not found"});
+        //     continue;
+        // }
+
+        // const candidate_name=resumeData.name;
+        // const candidate_email=resumeData.email;
+        // const contact_number=resumeData.contact_number;
+        // const city=resumeData.city;
+        // const country=resumeData.country;
+        // const years_of_experience=resumeData.years_of_experience;
+        // const expertise=resumeData.expertise;
+        // const current_company=resumeData.current_company;
+        // const location_preference=resumeData.location_preference;
+
+
+
+        const parsedResume = await resumator.parseResume(file.buffer);
+        if (!parsedResume) {
+            responses.push({ error: "Resume data not found" });
             continue;
         }
 
-        const candidate_name=resumeData.name;
-        const candidate_email=resumeData.email;
-        const contact_number=resumeData.contact_number;
-        const city=resumeData.city;
-        const country=resumeData.country;
-        const years_of_experience=resumeData.years_of_experience;
-        const expertise=resumeData.expertise;
-        const current_company=resumeData.current_company;
-        const location_preference=resumeData.location_preference;
+        const candidate_name = parsedResume.name || "Unknown";
+        const candidate_email = parsedResume.email || "Not Found";
+        const contact_number = parsedResume.phone || "Not Found";
+        
+        const location = parsedResume.location?.split(",");
+        const city = location?.[0]?.trim() || "Unknown";
+        const country = location?.[1]?.trim() || "Unknown";
+
+        const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
+            const match = exp.duration.match(/(\d+)\s*years?/);
+            return total + (match ? parseInt(match[1]) : 0);
+        }, 0) || 0;
+
+        const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
+        
+        const current_company = parsedResume.experience?.[0]?.company || "Unknown";
+        const location_preference = parsedResume.location || "Unknown";
 
           // Upload to S3
           const uploadParams = {
