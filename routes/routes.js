@@ -65,7 +65,7 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
 
         let parsedResume = null;
         try{
-           parsedResume = await resumator.parsedResume(file.buffer);
+           parsedResume = await resumator.parseResume(file.buffer);
         }
         catch(error){
           console.log(error);
