@@ -47,82 +47,84 @@ router.post("/uploadresumes", authMiddleware, upload.array("resumes", 5), async 
       for (const file of req.files) {
           const resume_id = nanoid();
 
-        // const resumeData = await service.extractResumeData(file.buffer);
-        // if(Object.keys(resumeData).length === 0 && resumeData.constructor === Object){
-        //     responses.push({error:"Resume data not found"});
-        //     continue;
-        // }
+          console.log(file);
 
-        // const candidate_name=resumeData.name;
-        // const candidate_email=resumeData.email;
-        // const contact_number=resumeData.contact_number;
-        // const city=resumeData.city;
-        // const country=resumeData.country;
-        // const years_of_experience=resumeData.years_of_experience;
-        // const expertise=resumeData.expertise;
-        // const current_company=resumeData.current_company;
-        // const location_preference=resumeData.location_preference;
-
-        let parsedResume = null;
-        try{
-           parsedResume = await resumator.parseResume(file.buffer);
-        }
-        catch(error){
-          console.log(error);
-        }
-        
-
-        console.log("parsedResume is :"+parsedResume);
-
-        if (!parsedResume) {
-            responses.push({ error: "Resume data not found" });
+        const resumeData = await service.extractResumeData(file.buffer);
+        if(Object.keys(resumeData).length === 0 && resumeData.constructor === Object){
+            responses.push({error:"Resume data not found"});
             continue;
         }
 
+        const candidate_name=resumeData.name;
+        const candidate_email=resumeData.email;
+        const contact_number=resumeData.contact_number;
+        const city=resumeData.city;
+        const country=resumeData.country;
+        const years_of_experience=resumeData.years_of_experience;
+        const expertise=resumeData.expertise;
+        const current_company=resumeData.current_company;
+        const location_preference=resumeData.location_preference;
 
-        try{
-
-          const candidate_name = parsedResume.name || "Unknown";
-        const candidate_email = parsedResume.email || "Not Found";
-        const contact_number = parsedResume.phone || "Not Found";
+        // let parsedResume = null;
+        // try{
+        //    parsedResume = await resumator.parseResume(file.buffer);
+        // }
+        // catch(error){
+        //   console.log(error);
+        // }
         
-        const location = parsedResume.location?.split(",");
-        const city = location?.[0]?.trim() || "Unknown";
-        const country = location?.[1]?.trim() || "Unknown";
 
-        const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
-            const match = exp.duration.match(/(\d+)\s*years?/);
-            return total + (match ? parseInt(match[1]) : 0);
-        }, 0) || 0;
+        // console.log("parsedResume is :"+parsedResume);
 
-        const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
+        // if (!parsedResume) {
+        //     responses.push({ error: "Resume data not found" });
+        //     continue;
+        // }
+
+
+        // try{
+
+        //   const candidate_name = parsedResume.name || "Unknown";
+        // const candidate_email = parsedResume.email || "Not Found";
+        // const contact_number = parsedResume.phone || "Not Found";
         
-        const current_company = parsedResume.experience?.[0]?.company || "Unknown";
-        const location_preference = parsedResume.location || "Unknown";
+        // const location = parsedResume.location?.split(",");
+        // const city = location?.[0]?.trim() || "Unknown";
+        // const country = location?.[1]?.trim() || "Unknown";
 
+        // const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
+        //     const match = exp.duration.match(/(\d+)\s*years?/);
+        //     return total + (match ? parseInt(match[1]) : 0);
+        // }, 0) || 0;
 
-
-
-        }catch(error){
-          console.log(error);
-        }
-        const candidate_name = parsedResume.name || "Unknown";
-        const candidate_email = parsedResume.email || "Not Found";
-        const contact_number = parsedResume.phone || "Not Found";
+        // const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
         
-        const location = parsedResume.location?.split(",");
-        const city = location?.[0]?.trim() || "Unknown";
-        const country = location?.[1]?.trim() || "Unknown";
+        // const current_company = parsedResume.experience?.[0]?.company || "Unknown";
+        // const location_preference = parsedResume.location || "Unknown";
 
-        const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
-            const match = exp.duration.match(/(\d+)\s*years?/);
-            return total + (match ? parseInt(match[1]) : 0);
-        }, 0) || 0;
 
-        const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
+
+
+        // }catch(error){
+        //   console.log(error);
+        // }
+        // const candidate_name = parsedResume.name || "Unknown";
+        // const candidate_email = parsedResume.email || "Not Found";
+        // const contact_number = parsedResume.phone || "Not Found";
         
-        const current_company = parsedResume.experience?.[0]?.company || "Unknown";
-        const location_preference = parsedResume.location || "Unknown";
+        // const location = parsedResume.location?.split(",");
+        // const city = location?.[0]?.trim() || "Unknown";
+        // const country = location?.[1]?.trim() || "Unknown";
+
+        // const years_of_experience = parsedResume.experience?.reduce((total, exp) => {
+        //     const match = exp.duration.match(/(\d+)\s*years?/);
+        //     return total + (match ? parseInt(match[1]) : 0);
+        // }, 0) || 0;
+
+        // const expertise = `${parsedResume.summary || ""} ${parsedResume.skills?.join(", ") || ""}`.trim();
+        
+        // const current_company = parsedResume.experience?.[0]?.company || "Unknown";
+        // const location_preference = parsedResume.location || "Unknown";
 
 
         console.log("step1");
