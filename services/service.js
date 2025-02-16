@@ -46,6 +46,13 @@ class Service {
   };
 
 
+
+
+
+
+
+
+
   async addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference) {
 
     const data = await this.repository.addResume(resume_id,recruiter_id,candidate_name,candidate_email,contact_number,city,country,years_of_experience,expertise,current_company,location_preference);
@@ -56,6 +63,12 @@ class Service {
     }
     
   };
+
+
+
+
+
+
 
 
   async getAllResumes(recruiter_id){
