@@ -63,7 +63,7 @@ const S3 = new S3Client({
 const getSignedUrlForRead = async (fileName) => {
     const command = new GetObjectCommand({
       Bucket: AWS_S3_BUCKET_NAME,
-      Key: fileName,
+      Key: `TalentPool/${fileName}`,
     });
   
     const signedUrl = await getSignedUrl(S3, command, {

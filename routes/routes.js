@@ -162,7 +162,7 @@ router.get("/getallresumes", authMiddleware, async (req, res) => {
 });
 
 
-router.get("/getresumebyid", authMiddleware, async (req, res) => {
+router.post("/getresumebyid", authMiddleware, async (req, res) => {
   const {resume_id} = req.body;
   const recruiter_id = req.userId;
 
