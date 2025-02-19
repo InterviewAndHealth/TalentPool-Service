@@ -58,6 +58,17 @@ class Repository {
 
     return result.rows[0];
   }
+
+
+  async getAllTalentPoolResumes(recruiter_id){
+
+    const result = await DB.query({
+      text: "SELECT * FROM talentpoolresumes WHERE recruiter_id = $1",
+      values: [recruiter_id],
+    });
+
+    return result.rows;
+  }
 }
 
 module.exports = Repository;
