@@ -12,7 +12,7 @@ const { SERVICE_QUEUE } = require("./config/index");
 
 module.exports = async (app) => {
   await DB.connect();
-  await Broker.connect();
+  // await Broker.connect();
 
   app.use(express.json());
   app.use(cors());
