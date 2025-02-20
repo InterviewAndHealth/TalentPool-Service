@@ -11,8 +11,14 @@ class TalentPoolService {
 
     if(request.type==="TALENTPOOL_GET_ALL_TALENTPOOL_USERS"){
 
+      console.log("hello from talentpool");
+
       const{recruiter_id}=request.data;
+
+      console.log(recruiter_id);
       const data=await this.repository.getAllTalentPoolResumes(recruiter_id);
+
+      console.log(data);
 
       return data;
 
