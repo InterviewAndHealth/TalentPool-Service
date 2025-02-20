@@ -116,7 +116,5 @@ class Service {
   }
 }
 
-EventService.subscribe(SERVICE_QUEUE, Service);
-RPCService.respond(Service);
 
 module.exports = Service;
