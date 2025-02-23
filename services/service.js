@@ -95,6 +95,19 @@ class Service {
     return { data: signedUrl }
   }
 
+
+
+  async updateResume(resume_id, updateData){
+    
+    const updatedResume = await this.repository.updateResume(resume_id, updateData);
+  if (!updatedResume) throw new InternalServerError("Failed to update resume");
+  
+  return {
+    message: "Resume updated successfully",
+    updatedResume,
+  };
+  }
+
   async rpc_test() {
     const data = await RPCService.request(TEST_RPC, {
       type: TEST_RPC,

@@ -69,6 +69,22 @@ class Repository {
 
     return result.rows;
   }
+
+
+  async updateResume(resume_id, updateData){
+    const fields = Object.keys(updateData);
+  const values = Object.values(updateData);
+
+  const setClause = fields.map((field, index) => `${field} = $${index + 2}`).join(', ');
+  const queryText = `UPDATE talentpoolresumes SET ${setClause}, updated_at = CURRENT_TIMESTAMP WHERE resume_id = $1 RETURNING *`;
+
+  const result = await DB.query({
+    text: queryText,
+    values: [resume_id, ...values],
+  });
+
+  return result.rows[0];
+  }
 }
 
 module.exports = Repository;

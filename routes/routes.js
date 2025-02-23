@@ -171,6 +171,14 @@ router.post("/getresumebyid", authMiddleware, async (req, res) => {
 });
 
 
+router.put("/updateresume", authMiddleware, async (req, res) => {
+  const { resume_id, ...updateData } = req.body;
+  const recruiter_id = req.userId;
+  const data = await service.updateResume(resume_id, updateData);
+  return res.status(200).json(data);
+})
+
+
 
 router.get("/rpc", async (req, res) => {
   const data = await service.rpc_test();
