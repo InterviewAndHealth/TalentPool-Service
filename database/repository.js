@@ -63,7 +63,7 @@ class Repository {
   async getAllTalentPoolResumes(recruiter_id){
 
     const result = await DB.query({
-      text: "SELECT * FROM talentpoolresumes WHERE recruiter_id = $1 LIMIT 1",
+      text: "SELECT * FROM talentpoolresumes WHERE recruiter_id = $1",
       values: [recruiter_id],
     });
 
