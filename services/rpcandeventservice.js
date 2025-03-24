@@ -28,6 +28,8 @@ class TalentPoolService {
   }
 
   async handleEvent(event) {
+
+    console.log("EVENT RECIEVED",event);
     if (event.type === "APPLY_JOB") {
       const { resume_id, recruiter_id, name, email } = event.data;
 
